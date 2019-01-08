@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.CustomerAcquireRecordMapper">
+
+    <insert id="insertCustomerAcquireRecord" parameterType="com.xianglin.act.common.dal.model.CustomerAcquire">
+      INSERT act_customer_acquire_record(PARTY_ID, USER_TYPE, ACTIVITY_CODE, MOBILE_PHONE,HEAD_IMAGE_URL,STATUS,PRIZE_CODE,PRIZE_VALUE, MEMC_CODE, ACQUIRE_DATE, CREATOR, UPDATER, CREATE_DATE, UPDATE_DATE)
+      VALUES (#{partyId}, #{userType}, #{activityCode}, #{mobilePhone}, #{headImageUrl},#{status},#{prizeCode}, #{prizeValue}, #{memcCode}, now(), 'system', 'system', now(), now())
+    </insert>
+
+    <select id="selectNewCustomerRecordCount" resultType="long">
+        SELECT count(*) FROM act_customer_acquire_record
+        WHERE PARTY_ID = #{partyId} AND IS_DELETED = '0' AND USER_TYPE = 'NEW_CUSTOMER'
+        AND ACTIVITY_CODE = #{activityCode}
+    </select>
+
+    <select id="selectRegularCustomerRecordCount" resultType="long">
+        SELECT count(*) FROM act_customer_acquire_record
+        WHERE PARTY_ID = #{partyId} AND IS_DELETED = '0' AND ACTIVITY_CODE = #{activityCode}
+        AND USER_TYPE = 'REGULAR_CUSTOMER'
+        AND ACQUIRE_DATE LIKE concat(date_format(now(), '%Y-%m-%d'), '%')
+    </select>
+
+    <select id="selectCustomerAcquireRecord" resultType="com.xianglin.act.common.dal.model.CustomerAcquire">
+      (SELECT
+          a.PARTY_ID                           partyId,
+          insert(a.MOBILE_PHONE, 4, 4, '****') mobilePhone,
+          a.HEAD_IMAGE_URL                     headImageUrl,
+          a.PRIZE_CODE                         prizeCode,
+          b.PRIZE_NAME                         prizeName,
+          a.ACQUIRE_DATE                       acquireDate
+        FROM act_customer_acquire_record a INNER JOIN act_prize b
+            ON a.PRIZE_CODE = b.PRIZE_CODE AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+            AND a.ACTIVITY_CODE = b.ACTIVITY_CODE
+        WHERE a.ACTIVITY_CODE = #{value} and b.PRIZE_LEVEL = 7
+        ORDER BY b.PRIZE_LEVEL DESC, ACQUIRE_DATE DESC
+        LIMIT 8 )
+				UNION ALL
+(SELECT
+          a.PARTY_ID                           partyId,
+          insert(a.MOBILE_PHONE, 4, 4, '****') mobilePhone,
+          a.HEAD_IMAGE_URL                     headImageUrl,
+          a.PRIZE_CODE                         prizeCode,
+          b.PRIZE_NAME                         prizeName,
+          a.ACQUIRE_DATE                       acquireDate
+        FROM act_customer_acquire_record a INNER JOIN act_prize b
+            ON a.PRIZE_CODE = b.PRIZE_CODE AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+            AND a.ACTIVITY_CODE = b.ACTIVITY_CODE
+        WHERE a.ACTIVITY_CODE = #{value} and b.PRIZE_LEVEL = 6
+        ORDER BY b.PRIZE_LEVEL DESC, ACQUIRE_DATE DESC
+        LIMIT 10)
+				UNION ALL
+(SELECT
+          a.PARTY_ID                           partyId,
+          insert(a.MOBILE_PHONE, 4, 4, '****') mobilePhone,
+          a.HEAD_IMAGE_URL                     headImageUrl,
+          a.PRIZE_CODE                         prizeCode,
+          b.PRIZE_NAME                         prizeName,
+          a.ACQUIRE_DATE                       acquireDate
+        FROM act_customer_acquire_record a INNER JOIN act_prize b
+            ON a.PRIZE_CODE = b.PRIZE_CODE AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+            AND a.ACTIVITY_CODE = b.ACTIVITY_CODE
+        WHERE a.ACTIVITY_CODE = #{value} and b.PRIZE_LEVEL = 5
+        ORDER BY b.PRIZE_LEVEL DESC, ACQUIRE_DATE DESC
+        LIMIT 10)
+				UNION ALL
+(SELECT
+          a.PARTY_ID                           partyId,
+          insert(a.MOBILE_PHONE, 4, 4, '****') mobilePhone,
+          a.HEAD_IMAGE_URL                     headImageUrl,
+          a.PRIZE_CODE                         prizeCode,
+          b.PRIZE_NAME                         prizeName,
+          a.ACQUIRE_DATE                       acquireDate
+        FROM act_customer_acquire_record a INNER JOIN act_prize b
+            ON a.PRIZE_CODE = b.PRIZE_CODE AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+            AND a.ACTIVITY_CODE = b.ACTIVITY_CODE
+        WHERE a.ACTIVITY_CODE = #{value} and b.PRIZE_LEVEL = 4
+        ORDER BY b.PRIZE_LEVEL DESC, ACQUIRE_DATE DESC
+        LIMIT 20)
+				UNION ALL
+(SELECT
+          a.PARTY_ID                           partyId,
+          insert(a.MOBILE_PHONE, 4, 4, '****') mobilePhone,
+          a.HEAD_IMAGE_URL                     headImageUrl,
+          a.PRIZE_CODE                         prizeCode,
+          b.PRIZE_NAME                         prizeName,
+          a.ACQUIRE_DATE                       acquireDate
+        FROM act_customer_acquire_record a INNER JOIN act_prize b
+            ON a.PRIZE_CODE = b.PRIZE_CODE AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+            AND a.ACTIVITY_CODE = b.ACTIVITY_CODE
+        WHERE a.ACTIVITY_CODE = #{value} and b.PRIZE_LEVEL = 3
+        ORDER BY b.PRIZE_LEVEL DESC, ACQUIRE_DATE DESC
+        LIMIT 17)
+				UNION ALL
+(SELECT
+          a.PARTY_ID                           partyId,
+          insert(a.MOBILE_PHONE, 4, 4, '****') mobilePhone,
+          a.HEAD_IMAGE_URL                     headImageUrl,
+          a.PRIZE_CODE                         prizeCode,
+          b.PRIZE_NAME                         prizeName,
+          a.ACQUIRE_DATE                       acquireDate
+        FROM act_customer_acquire_record a INNER JOIN act_prize b
+            ON a.PRIZE_CODE = b.PRIZE_CODE AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+            AND a.ACTIVITY_CODE = b.ACTIVITY_CODE
+        WHERE a.ACTIVITY_CODE = #{value} and b.PRIZE_LEVEL = 2
+        ORDER BY b.PRIZE_LEVEL DESC, ACQUIRE_DATE DESC
+        LIMIT 23)
+				UNION ALL
+(SELECT
+          a.PARTY_ID                           partyId,
+          insert(a.MOBILE_PHONE, 4, 4, '****') mobilePhone,
+          a.HEAD_IMAGE_URL                     headImageUrl,
+          a.PRIZE_CODE                         prizeCode,
+          b.PRIZE_NAME                         prizeName,
+          a.ACQUIRE_DATE                       acquireDate
+        FROM act_customer_acquire_record a INNER JOIN act_prize b
+            ON a.PRIZE_CODE = b.PRIZE_CODE AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+            AND a.ACTIVITY_CODE = b.ACTIVITY_CODE
+        WHERE a.ACTIVITY_CODE = #{value} and b.PRIZE_LEVEL = 1
+        ORDER BY b.PRIZE_LEVEL DESC, ACQUIRE_DATE DESC
+        LIMIT 12)
+    </select>
+
+    <select id="selectCustomerCount" resultType="long">
+        SELECT count(DISTINCT PARTY_ID)
+        FROM act_customer_acquire_record
+        WHERE IS_DELETED = '0' AND ACTIVITY_CODE = #{value}
+    </select>
+
+    <select id="selectCustomerAcquired" resultType="com.xianglin.act.common.dal.model.CustomerAcquire">
+        SELECT
+          t.PRIZE_CODE prizeCode,
+          t.PRIZE_VALUE prizeValue,
+          t.ACQUIRE_DATE acquireDate,
+          t.ACTIVITY_CODE activityCode,
+          t.USER_TYPE userType,
+          t.PARTY_ID partyId
+        FROM act_customer_acquire_record t
+        WHERE IS_DELETED = '0'
+        AND ACTIVITY_CODE = #{activityCode}
+        AND USER_TYPE = #{userType}
+        AND PRIZE_CODE = #{prizeCode}
+        AND PARTY_ID = #{partyId}
+    </select>
+
+    <select id="selectCustomerPrizeGreaterThan" resultType="com.xianglin.act.common.dal.model.CustomerAcquire">
+        <![CDATA[
+
+
+            SELECT a.PRIZE_CODE
+            FROM act_customer_acquire_record a INNER JOIN act_customer_prize b
+              INNER JOIN act_prize c
+                ON a.PRIZE_CODE = b.PRIZE_CODE AND a.PRIZE_CODE = c.PRIZE_CODE AND b.CUSTOMER_TYPE = #{userType}
+                AND c.PRIZE_LEVEL <= (SELECT a.PRIZE_LEVEL
+                                        FROM act_prize a INNER JOIN act_customer_prize b
+                                            ON a.PRIZE_CODE = b.PRIZE_CODE
+                                               AND a.IS_DELETED = '0'
+                                               AND b.IS_DELETED = '0'
+                                               AND b.CUSTOMER_TYPE = #{userType}
+                                               AND a.ACTIVITY_CODE = #{activityCode}
+                                               AND a.PRIZE_CODE = #{prizeCode})
+            WHERE
+              a.IS_DELETED = '0' AND b.IS_DELETED = '0' AND c.IS_DELETED = '0' AND a.ACTIVITY_CODE = #{activityCode} AND
+              PARTY_ID = #{partyId}
+
+
+        ]]>
+    </select>
+
+    <select id="selectByMemcCode" parameterType="string" resultType="com.xianglin.act.common.dal.model.CustomerAcquire">
+        SELECT
+          a.PARTY_ID       partyId,
+          a.HEAD_IMAGE_URL headImageUrl,
+          a.PRIZE_CODE     prizeCode,
+          a.PRIZE_VALUE    prizeValue,
+          a.ACQUIRE_DATE   acquireDate
+        FROM act_customer_acquire_record a
+        WHERE a.MEMC_CODE = #{value}
+    </select>
+
+    <select id="selectAcquireAmount" parameterType="long"
+            resultType="com.xianglin.act.common.dal.model.CustomerAcquire">
+        SELECT ifnull(sum(PRIZE_VALUE), 0) prizeValue, max(ACQUIRE_DATE) acquireDate
+        FROM act_customer_acquire_record
+        WHERE IS_DELETED = '0' AND USER_TYPE = 'RP_SHARER' AND ACTIVITY_CODE = 'RED_PACKET_V2' AND PARTY_ID = #{value}
+    </select>
+
+    <select id="isAlarm" resultType="boolean">
+      SELECT CASE
+       WHEN ((SELECT count(*)
+              FROM act_customer_acquire_record
+              WHERE USER_TYPE = 'RP_SHARER' AND ACTIVITY_CODE = 'RED_PACKET_V2' AND PRIZE_CODE = 'WX_RED_PACKET'
+                    AND ACQUIRE_DATE > DATE_SUB(now(), INTERVAL 30 MINUTE)) - (SELECT CONFIG_VALUE
+                                                                               FROM act_system_config
+                                                                               WHERE
+                                                                                 CONFIG_CODE = 'PARTAKER_RP_LIMIT')) >=
+            0
+         THEN 1
+       ELSE 0
+       END
+    </select>
+
+    <select id="selectVoteRecord" resultType="com.xianglin.act.common.dal.model.CustomerAcquire">
+        SELECT
+          PARTY_ID partyId,
+          ACTIVITY_CODE activityCode,
+          USER_TYPE userType,
+          PRIZE_CODE prizeCode,
+          PRIZE_VALUE prizeValue,
+          ACQUIRE_DATE acquireDate,
+          STATUS status
+        FROM act_customer_acquire_record
+        WHERE IS_DELETED = '0'
+          AND PARTY_ID = #{partyId}
+          AND ACTIVITY_CODE = #{activityCode}
+          AND `STATUS` = #{status}
+    </select>
+
+    <update id="updateAcquireRecord" parameterType="com.xianglin.act.common.dal.model.CustomerAcquire">
+        UPDATE act_customer_acquire_record
+        SET UPDATE_DATE = now(), MEMC_CODE = #{memcCode}, STATUS = #{status}, ACQUIRE_DATE = #{acquireDate}
+        WHERE ACTIVITY_CODE = #{activityCode} AND USER_TYPE = #{userType} AND PARTY_ID = #{partyId} AND STATUS = #{oldStatus}
+    </update>
+
+    <update id="updateCustomerPrizeMemo" parameterType="com.xianglin.act.common.dal.model.CustomerAcquire">
+        UPDATE act_customer_acquire_record t
+        SET UPDATE_DATE = now(), MEMC_CODE = #{memcCode}
+        WHERE ACTIVITY_CODE = #{activityCode}
+          AND USER_TYPE = #{userType}
+          AND PARTY_ID = #{partyId}
+    </update>
+</mapper>

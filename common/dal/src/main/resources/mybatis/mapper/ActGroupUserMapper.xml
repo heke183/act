@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xianglin.act.common.dal.mappers.ActGroupUserMapper" >
+  <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.ActGroupUser" >
+    <id column="ID" property="id" jdbcType="INTEGER" />
+    <result column="VERSION" property="version" jdbcType="INTEGER" />
+    <result column="PARTY_ID" property="partyId" jdbcType="BIGINT" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="HEAD_IMG" property="headImg" jdbcType="VARCHAR" />
+    <result column="BALANCE" property="balance" jdbcType="DECIMAL" />
+    <result column="UNION_ID" property="unionId" jdbcType="VARCHAR" />
+    <result column="QR_CODE" property="qrCode" jdbcType="VARCHAR" />
+    <result column="POSTER_URL" property="posterUrl" jdbcType="VARCHAR" />
+    <result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, VERSION, PARTY_ID, NAME, HEAD_IMG, BALANCE, UNION_ID, QR_CODE, POSTER_URL, IS_DELETED, 
+    CREATE_TIME, UPDATE_TIME, COMMENTS
+  </sql>
+  
+</mapper>

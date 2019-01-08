@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.ConfigMapper">
+
+    <select id="selectConfig" parameterType="string"
+            resultType="string" >
+        SELECT
+          CONFIG_VALUE
+        FROM act_system_config
+        WHERE IS_DELETED = '0'
+        AND CONFIG_CODE = #{value}
+    </select>
+
+    <update id="updateConfig" parameterType="string">
+        UPDATE act_system_config
+        SET CONFIG_VALUE = #{configValue}
+        WHERE
+        CONFIG_CODE = #{configCode}
+        AND IS_DELETED = '0'
+    </update>
+
+</mapper>

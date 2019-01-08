@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+    <description>数据访问层配置</description>
+
+    <!-- 数据源配置 -->
+    <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource" init-method="init" destroy-method="close">
+        <!-- 数据库基本信息配置 -->
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+        <property name="initialSize" value="${druid.initialSize}"/>
+        <property name="maxActive" value="${druid.maxActive}"/>
+        <property name="minIdle" value="${druid.minIdle}"/>
+        <property name="removeAbandoned" value="true"/>
+        <property name="logAbandoned" value="true"/>
+        <property name="proxyFilters">
+            <list>
+                <bean class="com.alibaba.druid.filter.stat.MergeStatFilter">
+                    <property name="slowSqlMillis" value="${druid.slowSqlMillis}"/>
+                    <property name="logSlowSql" value="true"/>
+                </bean>
+                <bean class="com.alibaba.druid.filter.logging.Slf4jLogFilter">
+                    <property name="statementExecutableSqlLogEnable" value="${druid.statementExecutableSqlLogEnable}"/>
+                </bean>
+                <bean class="com.alibaba.druid.wall.WallFilter">
+                    <property name="logViolation" value="true"/>
+                    <property name="throwException" value="false"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+
+    <!-- MyBatis配置 -->
+    <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <!-- 自动扫描entity目录, 省掉Configuration.xml里的手工配置 -->
+        <property name="typeAliasesPackage" value="com.xianglin.act.common.dal.model"/>
+        <!-- 显式指定Mapper文件位置 -->
+        <property name="mapperLocations" value="classpath:/mybatis/**/*.xml"/>
+        <!--java8 时间类型处理-->
+        <property name="typeHandlers">
+            <array value-type="org.apache.ibatis.type.TypeHandler">
+                <bean class="org.apache.ibatis.type.InstantTypeHandler"/>
+                <bean class="org.apache.ibatis.type.LocalDateTimeTypeHandler"/>
+                <bean class="org.apache.ibatis.type.LocalDateTypeHandler"/>
+                <bean class="org.apache.ibatis.type.LocalTimeTypeHandler"/>
+                <bean class="org.apache.ibatis.type.OffsetDateTimeTypeHandler"/>
+                <bean class="org.apache.ibatis.type.OffsetTimeTypeHandler"/>
+                <bean class="org.apache.ibatis.type.ZonedDateTimeTypeHandler"/>
+            </array>
+        </property>
+        <!--分页插件-->
+        <property name="plugins">
+            <array>
+                <bean class="com.github.pagehelper.PageInterceptor">
+                    <property name="properties">
+                        <props>
+                            <prop key="pagehelper.helperDialect">mysql</prop>
+                            <prop key="pagehelper.reasonable">true</prop>
+                        </props>
+                    </property>
+                </bean>
+            </array>
+        </property>
+    </bean>
+
+    <!-- 事务管理器配置 -->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+
+    <!-- 使用annotation定义事务 -->
+    <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true"/>
+
+    <!-- 扫描basePackage下所有接口 -->
+    <bean class="com.xianglin.act.common.dal.support.pop.SelectorMapperScannerConfigurer">
+        <property name="basePackage" value="com.xianglin.act.common.dal.mappers"/>
+    </bean>
+
+    <bean class="com.xianglin.act.common.dal.support.pop.SelectorRegesiter"/>
+
+    <bean class="com.xianglin.act.common.dal.support.pop.GenericPopWindowSelectorProcessor"/>
+
+    <bean class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+</beans>

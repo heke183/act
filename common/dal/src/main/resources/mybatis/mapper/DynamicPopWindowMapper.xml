@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.DynamicPopWindowMapper">
+    <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.DynamicPopWindow">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="POP_WINDOW_CODE" jdbcType="VARCHAR" property="popWindowCode"/>
+        <result column="PARTY_ID" jdbcType="BIGINT" property="partyId"/>
+        <result column="CONTENT" jdbcType="VARCHAR" property="content"/>
+        <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted"/>
+        <result column="CREATOR" jdbcType="VARCHAR" property="creator"/>
+        <result column="UPDATER" jdbcType="VARCHAR" property="updater"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, POP_WINDOW_CODE, PARTY_ID, CONTENT, IS_DELETED, CREATOR, UPDATER, CREATE_DATE, 
+    UPDATE_DATE, COMMENTS
+  </sql>
+    <select id="queryDynamicPopWindow" resultMap="com.xianglin.act.common.dal.mappers.PopWindowMapper.BaseResultMap">
+    SELECT
+      act.ID,
+      act.ACTIVITY_NAME,
+      act.TEMPLATE_CODE,
+      act.SHOW_START_TIME,
+      act.SHOW_EXPIRE_TIME,
+      act.ACTIVITY_LOGO,
+      act.ACTIVITY_LOGO_DEST_URL,
+      act.LEFT_BUTTON_URL,
+      act.RIGHT_BUTTON_URL,
+      act.ORDER_NUM,
+      act.STATUS,
+      act.IS_DELETED,
+      act.CREATOR,
+      act.UPDATER,
+      act.CREATE_DATE,
+      act.UPDATE_DATE,
+      act.COMMENTS,
+      act.FREQUENCY,
+      dy.CONTENT
+    FROM act_pop_window act INNER JOIN act_dynamic_pop_window dy ON act.EVENT_CODE = dy.EVENT_CODE
+    WHERE dy.PARTY_ID = #{value}
+          AND dy.IS_DELETED = 0
+          AND act.IS_DELETED = 0
+          AND act.TYPE = 'BY_EVENT'
+          AND act.STATUS = '0'
+    </select>
+
+</mapper>

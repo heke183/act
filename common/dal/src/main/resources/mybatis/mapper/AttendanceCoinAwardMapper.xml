@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.AttendanceCoinAwardMapper">
+    <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.AttendanceCoinAward">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="AWARD_NAME" jdbcType="VARCHAR" property="awardName"/>
+        <result column="AWARD_CODE" jdbcType="VARCHAR" property="awardCode"/>
+        <result column="CUSTOMER_TYPE" jdbcType="VARCHAR" property="targetCustomerType"/>
+        <result column="AWARD_TYPE" jdbcType="VARCHAR" property="awardType"/>
+        <result column="AWARD_TIMES" jdbcType="INTEGER" property="awardTimes"/>
+        <result column="SIGN_IN_ORDER_FLOOR_PERCENT" jdbcType="DECIMAL" property="signInOrderFloorPercent"/>
+        <result column="SIGN_IN_ORDER_CEIL_PERCENT" jdbcType="DECIMAL" property="signInOrderCeilPercent"/>
+        <result column="MIN_VALUE" jdbcType="DECIMAL" property="minValue"/>
+        <result column="MAX_VALUE" jdbcType="DECIMAL" property="maxValue"/>
+        <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted" />
+        <result column="CREATOR" jdbcType="VARCHAR" property="creator"/>
+        <result column="UPDATER" jdbcType="VARCHAR" property="updater"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID, AWARD_NAME, AWARD_CODE, CUSTOMER_TYPE, AWARD_TYPE, AWARD_TIMES, SIGN_IN_ORDER_FLOOR_PERCENT, 
+    SIGN_IN_ORDER_CEIL_PERCENT, MIN_VALUE, MAX_VALUE, IS_DELETED, CREATOR, UPDATER, CREATE_DATE, 
+    UPDATE_DATE, COMMENTS
+    </sql>
+    <select id="getUnmutifyAwards" resultMap="BaseResultMap">
+        SELECT *
+        FROM act_attendance_coin_award award
+        WHERE
+          award.IS_DELETED = '0'
+          AND award.TARGET_CUSTOMER_TYPE = 'DISCONTINUOUS'
+          AND award.AWARD_TYPE = 'UNMULTIPLY'
+        ORDER BY UPDATE_DATE DESC, CREATE_DATE DESC
+    </select>
+
+
+
+
+</mapper>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.CustomerAcquireContactinfoMapper">
+
+    <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.ContactInfo">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="PARTY_ID" jdbcType="BIGINT" property="partyId"/>
+        <result column="MOBILE_PHONE" jdbcType="VARCHAR" property="mobilePhone"/>
+        <result column="NAME" jdbcType="VARCHAR" property="name"/>
+        <result column="ADDRESS" jdbcType="VARCHAR" property="address"/>
+
+        <result column="CREATOR" jdbcType="VARCHAR" property="creator"/>
+        <result column="UPDATER" jdbcType="VARCHAR" property="updater"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments"/>
+    </resultMap>
+
+
+</mapper>

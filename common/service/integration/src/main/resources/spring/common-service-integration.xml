@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+    <context:component-scan base-package="com.xianglin.act.common.service.integration"/>
+
+    <!-- 使用注解方式暴露接口 -->
+    <dubbo:annotation package="com.xianglin.act.biz.service.implement"/>
+
+    <!-- 应用名称 -->
+    <dubbo:application name="act"/>
+    <!-- zookper注册地址 -->
+    <dubbo:registry id="registry" address="${dubbo.registry.address}" client="curator"/>
+
+    <dubbo:consumer check="${dubbo.consumer.check}" timeout="${dubbo.timeOutTime}" retries="0"/>
+
+    <!--CIF用户信息接口 -->
+    <dubbo:reference interface="com.xianglin.cif.common.service.facade.CustomersInfoService" id="customersInfoService"/>
+
+    <!--CIF金币 -->
+    <dubbo:reference interface="com.xianglin.cif.common.service.facade.GoldcoinService" id="goldcoinService"/>
+
+    <!--短信接口 -->
+    <dubbo:reference interface="com.xianglin.xlStation.common.service.facade.userFacade.MessageFacade"
+                     id="messageFacade"/>
+
+    <!-- app用户 -->
+    <dubbo:reference interface="com.xianglin.appserv.common.service.facade.app.PersonalService" id="personalService"/>
+
+    <!-- app活动 -->
+    <dubbo:reference interface="com.xianglin.appserv.common.service.facade.app.ActivityInviteService"
+                     id="activityInviteService"/>
+
+    <!-- app消息 -->
+    <dubbo:reference interface="com.xianglin.appserv.common.service.facade.MessageService" id="appMessageService"/>
+
+    <!-- app好友关系 -->
+    <dubbo:reference interface="com.xianglin.appserv.common.service.facade.UserRelationService" id="userRelationService"/>
+
+    <!-- app微博相关 -->
+    <dubbo:reference interface="com.xianglin.appserv.common.service.facade.app.ArticleService" id="articleService"/>
+
+    <dubbo:reference id="appservService" interface="com.xianglin.gateway.common.service.spi.JSONGatewayService" version="1.0.0" group="appgw-appserv"></dubbo:reference>
+
+    <!-- xlnodecore存款相关 -->
+    <dubbo:reference interface="com.xianglin.xlnodecore.common.service.facade.BankReceiptService" id="bankReceiptService"/>
+    <dubbo:reference interface="com.xianglin.xlnodecore.common.service.facade.NodeService" id="nodeService"/>
+
+    <dubbo:reference interface="com.xianglin.appserv.common.service.facade.app.LogService" id="logService"/>
+</beans>

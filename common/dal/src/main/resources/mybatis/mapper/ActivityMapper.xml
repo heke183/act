@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.ActivityMapper">
+
+    <select id="selectActivity" resultType="com.xianglin.act.common.dal.model.Activity" parameterType="string">
+        SELECT
+          ID id,
+          ACTIVITY_CODE activityCode,
+          ACTIVITY_NAME activityName,
+          START_DATE startDate,
+          EXPIRE_DATE expireDate,
+          ACTIVITY_RULE activityRule,
+          CREATE_DATE createDate
+        FROM act_activity
+        WHERE IS_DELETED = '0' AND ACTIVITY_CODE = #{activityCode}
+    </select>
+
+    <select id="selectActList" resultType="com.xianglin.act.common.dal.model.Activity">
+        <![CDATA[
+            SELECT
+              t.activityCode,
+              t.activityName,
+              t.startDate,
+              t.expireDate,
+              t.activityMainImg,
+              t.activityMainImgDest,
+              CASE
+              WHEN tt.DISPLAY_DATE < now() AND now() < t.expireDate
+                THEN 3
+              ELSE t.type
+              END type,
+              t.rank
+            FROM
+              (SELECT *
+               FROM (
+                      SELECT
+                        ACTIVITY_CODE          activityCode,
+                        ACTIVITY_NAME          activityName,
+                        START_DATE             startDate,
+                        EXPIRE_DATE            expireDate,
+                        ACTIVITY_MAIN_IMG      activityMainImg,
+                        ACTIVITY_MAIN_IMG_DEST activityMainImgDest,
+                        0                      type,
+                        @x := @x + 1           rank
+                      FROM act_activity
+                      WHERE START_DATE <= now() AND (EXPIRE_DATE >= now() OR EXPIRE_DATE IS NULL)
+                            AND ACTIVITY_MAIN_IMG IS NOT NULL
+                      ORDER BY startDate DESC
+                      LIMIT 5) a
+               UNION ALL
+
+               SELECT *
+               FROM (
+                      SELECT
+                        ACTIVITY_CODE          activityCode,
+                        ACTIVITY_NAME          activityName,
+                        START_DATE             startDate,
+                        EXPIRE_DATE            expireDate,
+                        ACTIVITY_MAIN_IMG      activityMainImg,
+                        ACTIVITY_MAIN_IMG_DEST activityMainImgDest,
+                        1                      type,
+                        @x := @x + 1           rank
+                      FROM act_activity
+                      WHERE START_DATE > now()
+                            AND ACTIVITY_MAIN_IMG IS NOT NULL
+                      ORDER BY startDate
+                      LIMIT 5) b
+               UNION ALL
+               SELECT *
+               FROM (
+                      SELECT
+                        ACTIVITY_CODE          activityCode,
+                        ACTIVITY_NAME          activityName,
+                        START_DATE             startDate,
+                        EXPIRE_DATE            expireDate,
+                        ACTIVITY_MAIN_IMG      activityMainImg,
+                        ACTIVITY_MAIN_IMG_DEST activityMainImgDest,
+                        2                      type,
+                        @x := @x + 1           rank
+                      FROM act_activity
+                      WHERE EXPIRE_DATE < now()
+                            AND ACTIVITY_MAIN_IMG IS NOT NULL
+                      ORDER BY expireDate DESC
+                      LIMIT 5) c) t LEFT JOIN (SELECT
+                                                 a.ACTIVITY_CODE,
+                                                 a.DISPLAY_DATE
+                                               FROM act_vote_activity_ext a,  (SELECT @x := 0) b) tt ON t.activityCode = tt.ACTIVITY_CODE
+            ORDER BY rank
+
+        ]]>
+    </select>
+
+    <select id="selectVoteActByActCode" resultType="com.xianglin.act.common.dal.model.VoteActivity">
+        SELECT
+          ac.ID            id,
+          ac.ACTIVITY_CODE activityCode,
+          ACTIVITY_NAME    activityName,
+          START_DATE       startDate,
+          EXPIRE_DATE      expireDate,
+          CAROUSEL_IMGS    carouselImgs,
+          DISPLAY_DATE     displayDate,
+          VOTE_MODE        voteMode,
+          EVETY_DAY_VOTES  evetyDayVotes,
+          ALL_VOTES        allVotes,
+          SHARE_ICON       shareIcon,
+          SHARE_TITLE      shareTitle,
+          SHARE_SUB_TITLE  shareSubTitle,
+          SHARE_URL        shareUrl,
+          AWARD_DESC       awardDesc,
+          ACT_DESC         actDesc,
+          VOTE_DESC        voteDesc,
+          DESC_FOOTER      descFooter
+        FROM act_activity ac INNER JOIN act_vote_activity_ext ex ON ac.ACTIVITY_CODE = ex.ACTIVITY_CODE
+        WHERE ac.ACTIVITY_CODE = #{value}
+              AND ac.IS_DELETED = '0'
+              AND ex.IS_DELETED = '0'
+    </select>
+
+    <update id="updateActDesc">
+        UPDATE act_vote_activity_ext SET ACT_DESC = #{desc}, UPDATE_DATE = now()
+        WHERE ACTIVITY_CODE = #{activityCode}
+    </update>
+</mapper>

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xianglin.act.common.dal.mappers.ActInviteMapper" >
+  <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.ActInvite" >
+    <id column="ID" property="id" jdbcType="BIGINT" />
+    <result column="PARTY_ID" property="partyId" jdbcType="BIGINT" />
+    <result column="USER_TYPE" property="userType" jdbcType="VARCHAR" />
+    <result column="NAME" property="name" jdbcType="VARCHAR" />
+    <result column="GENDER" property="gender" jdbcType="VARCHAR" />
+    <result column="AGE" property="age" jdbcType="INTEGER" />
+    <result column="MOBILE_PHONE" property="mobilePhone" jdbcType="VARCHAR" />
+    <result column="PROVINCE" property="province" jdbcType="VARCHAR" />
+    <result column="CITY" property="city" jdbcType="VARCHAR" />
+    <result column="COUNTY" property="county" jdbcType="VARCHAR" />
+    <result column="TOWN" property="town" jdbcType="VARCHAR" />
+    <result column="VILLAGE" property="village" jdbcType="VARCHAR" />
+    <result column="WX_INFO" property="wxInfo" jdbcType="VARCHAR" />
+    <result column="NODE_MOBILE" property="nodeMobile" jdbcType="VARCHAR" />
+    <result column="SIGN_TIME" property="signTime" jdbcType="TIMESTAMP" />
+    <result column="SOURCE" property="source" jdbcType="VARCHAR" />
+    <result column="EXPECT_NUM" property="expectNum" jdbcType="INTEGER" />
+    <result column="INVITE_NUM" property="inviteNum" jdbcType="INTEGER" />
+    <result column="REGISTER_NUM" property="registerNum" jdbcType="INTEGER" />
+    <result column="ACTIVE_NUM" property="activeNum" jdbcType="INTEGER" />
+    <result column="PAST_ACTIVE_USER" property="pastActiveUser" jdbcType="INTEGER" />
+    <result column="PAST_ACTIVE_DEVICE" property="pastActiveDevice" jdbcType="INTEGER" />
+    <result column="AUDDIT_TIME" property="audditTime" jdbcType="TIMESTAMP" />
+    <result column="STATUS" property="status" jdbcType="VARCHAR" />
+    <result column="IS_DELETED" property="isDeleted" jdbcType="VARCHAR" />
+    <result column="CREATE_TIME" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="UPDATE_TIME" property="updateTime" jdbcType="TIMESTAMP" />
+    <result column="COMMENTS" property="comments" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    ID, PARTY_ID, USER_TYPE, NAME, GENDER, AGE, MOBILE_PHONE, PROVINCE, CITY, COUNTY, 
+    TOWN, VILLAGE, WX_INFO, NODE_MOBILE, SIGN_TIME, SOURCE, EXPECT_NUM, INVITE_NUM, REGISTER_NUM, 
+    ACTIVE_NUM, PAST_ACTIVE_USER, PAST_ACTIVE_DEVICE, AUDDIT_TIME, STATUS, IS_DELETED, 
+    CREATE_TIME, UPDATE_TIME, COMMENTS
+  </sql>
+
+  <select id="selectActIviteList" resultMap="BaseResultMap">
+    SELECT <include refid="Base_Column_List"/> from act_invite a where a.`STATUS` = 'S' and a.IS_DELETED = 'N' ORDER BY a.REGISTER_NUM desc,a.CREATE_TIME asc limit 0,100
+  </select>
+  
+</mapper>

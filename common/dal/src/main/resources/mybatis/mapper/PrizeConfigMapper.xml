@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.PrizeConfigMapper">
+
+    <select id="selectGrandPrize" resultType="com.xianglin.act.common.dal.model.PrizeConfig" parameterType="string">
+        <![CDATA[
+            SELECT
+              a.ID            id,
+              a.PRIZE_CODE prizeCode,
+              CUSTOMER_TYPE customerType,
+              START_DATE    startDate,
+              EXPIRE_DATE   expireDate,
+              b.PRIZE_LEVEL prizeLevel
+            FROM act_prize_config a INNER JOIN act_prize b
+                ON a.PRIZE_CODE = b.PRIZE_CODE AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+            WHERE START_DATE <= NOW() AND EXPIRE_DATE >= NOW()
+             AND CUSTOMER_TYPE = #{value}
+        ]]>
+    </select>
+
+    <update id="deleteGrandPrizeConfig" parameterType="long">
+        UPDATE act_prize_config
+        SET IS_DELETED = '1', UPDATE_DATE = now(), UPDATER = 'system'
+        WHERE ID = #{value}
+    </update>
+
+</mapper>

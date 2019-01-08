@@ -1,0 +1,51 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.xianglin</groupId>
+        <artifactId>act-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>act-common-service-integration</artifactId>
+    <packaging>jar</packaging>
+
+    <name>act-common-service-integration</name>
+    <url>http://maven.apache.org</url>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.xianglin</groupId>
+            <artifactId>act-common-util</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xianglin.cif</groupId>
+            <artifactId>cif-common-service-facade</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xianglin.xlStation</groupId>
+            <artifactId>xl-common-service-facade</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xianglin.appserv</groupId>
+            <artifactId>appserv-common-service-facade</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.xianglin.xlnodecore</groupId>
+            <artifactId>xlnodecore-common-service-facade</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <filters>
+            <filter>../../../${env}-config.properties</filter>
+        </filters>
+    </build>
+
+</project>

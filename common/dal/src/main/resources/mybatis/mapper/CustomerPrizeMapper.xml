@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.CustomerPrizeMapper">
+
+    <update id="updateCustomerPrizeAvailableAmount" parameterType="com.xianglin.act.common.dal.model.CustomerPrize">
+
+        UPDATE act_customer_prize
+        SET AVAILABLE_AMOUNT = AVAILABLE_AMOUNT - 1, UPDATE_DATE = now(), UPDATER = 'system'
+        WHERE CUSTOMER_TYPE = #{customerType} AND PRIZE_CODE = #{prizeCode} AND AVAILABLE_AMOUNT > 0 AND IS_DELETED = '0'
+    </update>
+
+    <select id="selectCustomerPrize" parameterType="string"
+            resultType="com.xianglin.act.common.dal.model.CustomerPrize">
+        SELECT
+          CUSTOMER_TYPE    customerType,
+          a.PRIZE_CODE     prizeCode,
+          AMOUNT           amount,
+          AVAILABLE_AMOUNT availableAmount,
+          ADD_PROBABILITY  probability,
+          INITIAL_PROBABILITY initialProbability,
+          b.PRIZE_LEVEL    prizeLevel,
+          a.MIN_VALUE       `minValue`,
+          a.MAX_VALUE       `maxValue`,
+          a.REMAIN_VALUE   remainValue,
+          b.UNIT_RMB       unitRmb
+        FROM act_customer_prize a INNER JOIN act_prize b ON a.PRIZE_CODE = b.PRIZE_CODE
+        WHERE a.IS_DELETED = '0' AND b.IS_DELETED = '0' AND CUSTOMER_TYPE = #{userType}
+        AND b.ACTIVITY_CODE = #{activityCode} ORDER BY PRIZE_LEVEL
+    </select>
+
+    <select id="selectCustomerPrizeUnique" resultType="com.xianglin.act.common.dal.model.CustomerPrize">
+
+        SELECT
+          CUSTOMER_TYPE    customerType,
+          a.PRIZE_CODE     prizeCode,
+          AMOUNT           amount,
+          AVAILABLE_AMOUNT availableAmount,
+          ADD_PROBABILITY  probability,
+          b.PRIZE_LEVEL    prizeLevel,
+          a.MIN_VALUE       minValue,
+          a.MAX_VALUE       `maxValue`,
+          a.REMAIN_VALUE    remainValue
+        FROM act_customer_prize a INNER JOIN act_prize b ON a.PRIZE_CODE = b.PRIZE_CODE
+        WHERE a.IS_DELETED = '0' AND b.IS_DELETED = '0' AND CUSTOMER_TYPE = #{userType}
+        AND b.ACTIVITY_CODE = #{activityCode} AND a.PRIZE_CODE = #{prizeCode}
+    </select>
+
+    <update id="updateWxRedPacket" >
+        UPDATE act_customer_prize
+        SET AVAILABLE_AMOUNT = AMOUNT, UPDATE_DATE = now()
+        WHERE IS_DELETED = '0' AND CUSTOMER_TYPE = 'RP_SHARER' AND PRIZE_CODE = 'WX_RED_PACKET'
+    </update>
+
+    <update id="updateCustomerPrizeMaxAndMinValue">
+        UPDATE act_customer_prize SET MAX_VALUE = #{maxValue}, MIN_VALUE = #{minValue} WHERE CUSTOMER_TYPE = #{customerType} AND PRIZE_CODE = #{prizeCode}
+    </update>
+
+</mapper>

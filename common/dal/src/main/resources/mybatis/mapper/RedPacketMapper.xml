@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.RedPacketMapper">
+
+    <insert id="createRedPacket" parameterType="com.xianglin.act.common.dal.model.redpacket.RedPacket">
+        <![CDATA[
+
+        INSERT INTO act_red_packet (PACKET_ID, PARTY_ID, START_DATE, EXPIRE_DATE,PACKET_INFO,IS_CHECKED,
+                            CREATOR, UPDATER, CREATE_DATE, UPDATE_DATE)
+        VALUES (#{packetId}, #{partyId}, now(),
+                date_add(now(), INTERVAL (SELECT CONFIG_VALUE FROM act_system_config WHERE CONFIG_CODE = 'RED_PACKET_EXPIRE') HOUR),
+                #{packetInfo},
+                #{isChecked},
+                'system', 'system', now(), now());
+
+        ]]>
+    </insert>
+
+    <update id="updateRedPacketCompletion" parameterType="string">
+        <![CDATA[
+        UPDATE act_red_packet a, (SELECT count(*) ab from (SELECT count(PARTY_ID)
+                          FROM act_red_packet_partaker
+                          WHERE PACKET_ID = #{value} AND USER_TYPE = 'RP_PARTAKER' AND IS_REMIND = 'Y'
+                          GROUP BY PARTY_ID) t) b
+        SET a.IS_COMPLETE = if(EXPIRE_DATE < now(), 'N','Y')
+          , COMPLETE_DATE = now()
+        WHERE b.ab >= (SELECT CONFIG_VALUE
+                       FROM act_system_config
+                       WHERE CONFIG_CODE = 'RED_PACKET_PARTAKER')
+              AND a.PACKET_ID = #{value} AND COMPLETE_DATE IS NULL
+        ]]>
+    </update>
+
+    <select id="selectCompleteRedPacketOfDay" parameterType="long"
+            resultType="com.xianglin.act.common.dal.model.redpacket.RedPacketInfo">
+        <![CDATA[
+
+        SELECT
+          PACKET_ID packetId,
+          PARTY_ID partyId,
+          START_DATE startDate,
+          IS_COMPLETE isComplete,
+          EXPIRE_DATE expireDate,
+          COMPLETE_DATE completeDate,
+          MEMC_CODE memcCode
+        FROM act_red_packet
+        WHERE IS_DELETED = '0' AND IS_COMPLETE = 'Y'
+        AND COMPLETE_DATE < EXPIRE_DATE
+        AND DATE(START_DATE) = curdate()
+        AND PARTY_ID = #{value}
+        ORDER BY COMPLETE_DATE DESC
+        ]]>
+    </select>
+
+    <select id="selectUnExpireRedPacketOfDay" parameterType="long"
+            resultType="com.xianglin.act.common.dal.model.redpacket.RedPacketInfo">
+        <![CDATA[
+        SELECT
+          PACKET_ID     packetId,
+          PARTY_ID      partyId,
+          PACKET_INFO   packetInfo,
+          START_DATE    startDate,
+          IS_COMPLETE   isComplete,
+          EXPIRE_DATE   expireDate,
+          COMPLETE_DATE completeDate,
+          MEMC_CODE     memcCode
+        FROM act_red_packet
+        WHERE IS_DELETED = '0'
+              AND EXPIRE_DATE > now()
+              AND DATE(START_DATE) = curdate()
+              AND PARTY_ID = #{partyId}
+              AND (IS_COMPLETE = 'N' OR (IS_COMPLETE = 'Y' AND MEMC_CODE IS NULL))
+        ]]>
+    </select>
+
+    <select id="selectLastRedPacket" resultType="com.xianglin.act.common.dal.model.redpacket.RedPacketInfo">
+        SELECT
+          PACKET_ID     packetId,
+          a.PARTY_ID    partyId,
+          START_DATE    startDate,
+          IS_COMPLETE   isComplete,
+          EXPIRE_DATE   expireDate,
+          COMPLETE_DATE completeDate,
+          MEMC_CODE     memcCode,
+          IS_CHECKED    isChecked
+          FROM act_red_packet a INNER JOIN act_red_packet_sharer b
+            ON a.PARTY_ID = b.PARTY_ID
+               AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+        WHERE a.PARTY_ID = #{partyId}
+        ORDER BY startDate DESC
+        LIMIT 1
+    </select>
+
+    <update id="updateRedpacketMemcCode">
+        UPDATE act_red_packet
+        SET MEMC_CODE = #{memcCode}, UPDATE_DATE = now(),UPDATER='system'
+        WHERE IS_DELETED = '0' AND PACKET_ID = #{packetId} AND MEMC_CODE IS NULL
+    </update>
+
+    <select id="selectCompleteRedPacketUnchecked" parameterType="long"
+            resultType="com.xianglin.act.common.dal.model.redpacket.RedPacket">
+        <![CDATA[
+
+        SELECT
+          PACKET_ID packetId,
+          PARTY_ID partyId,
+          START_DATE startDate,
+          IS_COMPLETE isComplete,
+          EXPIRE_DATE expireDate,
+          COMPLETE_DATE completeDate
+        FROM act_red_packet
+        WHERE IS_DELETED = '0' AND IS_COMPLETE = 'Y'
+        AND COMPLETE_DATE < EXPIRE_DATE
+        AND IS_CHECKED = 'N'
+        AND PARTY_ID = #{value}
+        ]]>
+    </select>
+
+    <select id="selectRedPacket" resultType="com.xianglin.act.common.dal.model.redpacket.RedPacket">
+        SELECT
+          PACKET_ID     packetId,
+          PARTY_ID      partyId,
+          START_DATE    startDate,
+          IS_COMPLETE   isComplete,
+          EXPIRE_DATE   expireDate,
+          COMPLETE_DATE completeDate
+        FROM act_red_packet
+        WHERE IS_DELETED = '0' AND PACKET_ID = #{value}
+    </select>
+
+    <select id="selectAllUnExpireRedPacketOfDay" resultType="com.xianglin.act.common.dal.model.redpacket.RedPacket">
+        <![CDATA[
+        SELECT
+          PACKET_ID     packetId,
+          PARTY_ID      partyId,
+          START_DATE    startDate,
+          IS_COMPLETE   isComplete,
+          EXPIRE_DATE   expireDate,
+          COMPLETE_DATE completeDate,
+          MEMC_CODE     memcCode
+        FROM act_red_packet
+        WHERE IS_DELETED = '0'
+              AND EXPIRE_DATE > now()
+              AND DATE(START_DATE) = curdate()
+        ]]>
+    </select>
+
+</mapper>

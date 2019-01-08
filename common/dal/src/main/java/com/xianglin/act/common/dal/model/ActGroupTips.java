@@ -1,0 +1,54 @@
+package com.xianglin.act.common.dal.model;
+
+import lombok.*;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.Date;
+
+/**
+ * Describe :
+ * Created by xingyali on 2018/12/19 10:32.
+ * Update reason :
+ */
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@ToString
+@Table(name = "act_group_tips")
+public class ActGroupTips {
+    @Id
+    @GeneratedValue(generator = "JDBC")
+    private Long id;
+
+    /**
+     * 用户partyId
+     */
+    private Long partyId;
+
+    /**
+     *类型 
+     */
+    private String type;
+
+    /**
+     * 信息累人
+     */
+    private String tips;
+
+    /**
+     *变动金额
+     */
+    private BigDecimal changeValue;
+
+    private String isDeleted;
+
+    private Date createTime;
+
+    private Date updateTime;
+
+    private String comments;
+}

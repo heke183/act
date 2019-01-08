@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+    <import resource="classpath*:/spring/common-*.xml"/>
+    <import resource="classpath*:/spring/core-*.xml"/>
+
+    <bean class="com.xianglin.core.service.PrizeAwardUtils">
+        <property name="ecLuckyCouponsUrl" value="${ec.ecLuckyCouponsUrl}"/>
+        <property name="appId" value="${wx.pay.appid}"/>
+        <property name="mchId" value="${wx.pay.mchId}"/>
+        <property name="apiSecret" value="${wx.pay.api.secret}"/>
+        <property name="clineIp" value="${cline.ip}" />
+    </bean>
+
+    <bean class="com.xianglin.act.biz.shared.Impl.VoteOfWorldCupServiceImpl"/>
+</beans>

@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration debug="false" scan="false">
+
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="error" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+            <level>ERROR</level>
+        </filter>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/error_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="common" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/common_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="dubbo" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/dubbo_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="druid" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/druid_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="sql" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/sql_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="default" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/default_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="common-default" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/common-default_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="common-util" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/common-util_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="common-dal" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/common-dal_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="common-service-integration" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/common-service-integration_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="core-default" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/core-default_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="core-model" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/core-model_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="core-service" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/core-service_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="biz-default" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/biz-default_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="biz-shared" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/biz-shared_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="biz-service-implement" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/biz-service-implement_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="web-default" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/web-default_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <appender name="web-home" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <Encoding>UTF-8</Encoding>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <fileNamePattern>${log.dir}/web-home_%d{yyyy-MM-dd}.%i.log
+            </fileNamePattern>
+            <maxHistory>5</maxHistory>
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>100MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <pattern>
+                %d{yyyy-MM-dd HH:mm:ss.SSS},%-5level,%logger{72} - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+
+    <root level="info">
+        <appender-ref ref="console"/>
+        <appender-ref ref="common"/>
+        <appender-ref ref="error"/>
+    </root>
+
+    <logger name="com.alibaba.dubbo" level="info" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="dubbo"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.alibaba.druid" level="${log.level}" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="druid"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="druid.sql" level="${log.level}" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="sql"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <!--<logger name="druid.sql" level="debug" additivity="false">-->
+        <!--<appender-ref ref="sql"/>-->
+    <!--</logger>-->
+
+    <logger name="com.xianglin" level="${log.level}" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="default"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.common" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="common-default"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.common.util" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="common-util"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="c.x.act.common.dal" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="common-dal"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.common.service.integration" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="common-service-integration"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.core" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="core-default"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.core.model" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="core-model"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.core.service" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="core-service"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.biz" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="biz-default"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.biz.shared" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="biz-shared"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.biz.service.implement" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="biz-service-implement"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.web" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="web-default"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+    <logger name="com.xianglin.web.home" additivity="false">
+        <appender-ref ref="console"/>
+        <appender-ref ref="web-home"/>
+        <appender-ref ref="error"/>
+    </logger>
+
+</configuration>

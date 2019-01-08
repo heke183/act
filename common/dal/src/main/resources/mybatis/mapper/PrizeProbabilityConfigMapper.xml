@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.PrizeProbabilityConfigMapper">
+
+    <select id="selectAddProbability" resultType="com.xianglin.act.common.dal.model.PrizeProbabilityConfig" parameterType="string">
+        SELECT
+          CUSTOMER_TYPE customerType,
+          INITIAL_PROBABILITY initialProbability,
+          ADD_PROBABILITY addProbability,
+          INCREMENT increment
+        FROM act_prize_probability_config
+        WHERE IS_DELETED = '0' AND CUSTOMER_TYPE = #{value}
+    </select>
+
+    <update id="resetProbability" parameterType="string">
+        UPDATE act_prize_probability_config
+        SET ADD_PROBABILITY = INITIAL_PROBABILITY, UPDATE_DATE = now(), UPDATER = 'system'
+        WHERE IS_DELETED = '0' AND CUSTOMER_TYPE = #{value}
+    </update>
+
+    <update id="addProbability">
+        <![CDATA[
+            UPDATE act_prize_probability_config
+            SET ADD_PROBABILITY = ADD_PROBABILITY + INCREMENT, UPDATE_DATE = now(), UPDATER = 'system'
+            WHERE IS_DELETED = '0' AND ADD_PROBABILITY + INCREMENT < 1;
+         ]]>
+    </update>
+
+</mapper>

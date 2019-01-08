@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.ActStepMapper">
+
+    <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.ActStepDetail">
+        <id column="id" jdbcType="BIGINT" property="id" />
+        <result column="PARTY_ID" jdbcType="BIGINT" property="partyId" />
+        <result column="DAY" jdbcType="VARCHAR" property="day" />
+        <result column="TYPE" jdbcType="VARCHAR" property="type" />
+        <result column="STEP_NUMBER" jdbcType="INTEGER" property="stepNumber" />
+        <result column="STATUS" jdbcType="VARCHAR" property="status" />
+        <result column="GOLD_REWARD" jdbcType="INTEGER" property="goldReward" />
+        <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted" />
+        <result column="REWARD_TIME" jdbcType="DATE" property="rewardTime" />
+        <result column="CREATE_TIME" jdbcType="DATE" property="createTime" />
+        <result column="UPDATE_TIME" jdbcType="DATE" property="updateTime" />
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments" />
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+    ID, PARTY_ID,DAY, STEP_NUMBER, STATUS, GOLD_REWARD, IS_DELETED,REWARD_TIME,CREATE_TIME,UPDATE_TIME,COMMENTS
+  </sql>
+    
+    
+    <update id="updateDayTotail">
+        UPDATE act_step_detail d,
+        (
+        SELECT
+            SUM( STEP_NUMBER ) AS STEP_NUMBER,
+            sum( GOLD_REWARD ) AS GOLD_REWARD
+        FROM
+            act_step_detail
+        WHERE
+            PARTY_ID = #{partyId}
+            AND DAY = #{day}
+            AND type != 'ALL'
+            AND IS_DELETED = 'N'
+            ) AS t
+            SET d.STEP_NUMBER = t.STEP_NUMBER,
+            d.GOLD_REWARD = t.GOLD_REWARD,
+            d.UPDATE_TIME = NOW()
+        WHERE
+            d.PARTY_ID = #{partyId}
+            AND d.DAY = #{day}
+            AND d.type = 'ALL'
+            AND d.IS_DELETED = 'N';
+
+    </update>
+
+    <select id="selectActStepDetailList" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List" />
+        from act_step_detail
+        <where> IS_DELETED = 'N'
+            <if test="paras.id != null" >
+                and ID = #{paras.id,jdbcType=BIGINT}
+            </if>
+            <if test="paras.partyId != null" >
+                and PARTY_ID = #{paras.partyId,jdbcType=BIGINT}
+            </if>
+            <if test="paras.day != null">
+                and DAY = #{paras.day,jdbcType=VARCHAR}
+            </if>
+            <if test="paras.type != null">
+                and TYPE = #{paras.type,jdbcType=VARCHAR}
+           </if>
+            <if test="excludeStepNumber != null">
+                and STEP_NUMBER ${excludeStepNumber}
+            </if>
+            <if test="paras.stepNumber != null">
+                and STEP_NUMBER = #{paras.stepNumber,jdbcType=VARCHAR}
+            </if>
+            <if test="paras.status != null" >
+                and STATUS = #{paras.status,jdbcType=VARCHAR}
+            </if>
+            <if test="paras.goldReward != null and paras.goldReward !=0" >
+                and GOLD_REWARD = #{paras.goldReward,jdbcType=VARCHAR}
+            </if>    
+        <if test="orderBy != null" >
+            order by ${orderBy}
+        </if>
+        <if test="orderBy == null" >
+            order by CREATE_TIME desc
+        </if>
+        </where>
+        <if test="page != null">
+            <bind name="start" value="(page.startPage-1)*page.pageSize"/>
+            limit #{start},#{page.pageSize}
+        </if>
+        
+    </select>
+    
+    <select id="selectGoldRewardSum" resultType="int">
+      SELECT
+         ifnull(sum(GOLD_REWARD),0)
+    FROM
+        act_step_detail
+    WHERE
+        IS_DELETED = 'N'
+        <if test="paras.partyId != null" >
+            and PARTY_ID = #{paras.partyId,jdbcType=BIGINT}
+        </if>
+        <if test="paras.status != null" >
+            and STATUS = #{paras.status,jdbcType=VARCHAR}
+        </if>
+    </select>
+
+    <select id="selectActStepCount" resultType="int">
+        SELECT
+        count(*)
+        FROM
+        act_step_detail
+        WHERE
+        IS_DELETED = 'N'
+        <if test="paras.partyId != null" >
+            and PARTY_ID = #{paras.partyId,jdbcType=BIGINT}
+        </if>
+        <if test="paras.type != null" >
+            and TYPE = #{paras.type,jdbcType=VARCHAR}
+        </if>
+        <if test="paras.goldReward != null" >
+            and GOLD_REWARD > 0
+        </if>
+    </select>
+    
+
+</mapper>

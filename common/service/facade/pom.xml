@@ -1,0 +1,40 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>com.xianglin</groupId>
+        <artifactId>act-parent</artifactId>
+        <version>1.0.0</version>
+        <relativePath>../../../pom.xml</relativePath>
+    </parent>
+
+    <artifactId>act-common-service-facade</artifactId>
+    <packaging>jar</packaging>
+    <version>${project.facade.version}</version>
+
+    <name>act-common-service-facade</name>
+    <url>http://maven.apache.org</url>
+    <!--兼容低版本-->
+    <properties>
+        <jdk.version>1.7</jdk.version>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <filters>
+            <filter>../../../${env}-config.properties</filter>
+        </filters>
+        <plugins>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

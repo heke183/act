@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.PopWindowHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.PopWindowHistory">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="POP_WINDOW_ID" jdbcType="BIGINT" property="popWindowId" />
+    <result column="PARTY_ID" jdbcType="BIGINT" property="partyId" />
+    <result column="ACTIVITY_NAME" jdbcType="VARCHAR" property="activityName" />
+    <result column="POP_DATE" jdbcType="TIMESTAMP" property="popDate" />
+    <result column="TEMPLATE_CODE" jdbcType="VARCHAR" property="templateCode" />
+    <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted" />
+    <result column="CREATOR" jdbcType="VARCHAR" property="creator" />
+    <result column="UPDATER" jdbcType="VARCHAR" property="updater" />
+    <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="COMMENTS" jdbcType="VARCHAR" property="comments" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, POP_WINDOW_ID, PARTY_ID, ACTIVITY_NAME, POP_DATE, TEMPLATE_CODE, IS_DELETED,
+    CREATOR, UPDATER, CREATE_DATE, UPDATE_DATE, COMMENTS
+  </sql>
+</mapper>

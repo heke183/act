@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xmlns:jobs="http://www.xianglin.com/jobs"
+       xsi:schemaLocation="
+       http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd
+       http://www.xianglin.com/jobs
+       http://www.xianglin.com/jobs/jobs.xsd">
+
+    <context:component-scan base-package="com.xianglin.act.biz.shared"/>
+
+    <bean class="com.xianglin.act.biz.shared.Impl.pop.converter.RedPacketInfoConverter">
+       <!-- <property name="url" value="${app.rp.internal}"/>-->
+        <property name="url" value="http://h5-dev.xianglin.cn/act/page/sendMoney/entry.html"/>
+    </bean>
+
+    <bean class="com.xianglin.core.service.PrizeAwardUtils">
+        <!--<property name="ecLuckyCouponsUrl" value="${ec.ecLuckyCouponsUrl}"/>
+        <property name="appId" value="${wx.pay.appid}"/>
+        <property name="mchId" value="${wx.pay.mchId}"/>
+        <property name="apiSecret" value="${wx.pay.api.secret}"/>
+        <property name="clineIp" value="${cline.ip}" />-->
+        <property name="ecLuckyCouponsUrl" value="${ec.ecLuckyCouponsUrl}"/>
+        <property name="appId" value="${wx.pay.appid}"/>
+        <property name="mchId" value="${wx.pay.mchId}"/>
+        <property name="apiSecret" value="${wx.pay.api.secret}"/>
+        <property name="clineIp" value="${cline.ip}" />
+    </bean>
+
+    <jobs:component-scan systemName="act" basePackages="com.xianglin.act.biz.shared,com.xianglin.core.service.impl"/>
+
+    <jobs:delegate id="proxyService" version="1.0.0" >
+        <jobs:property registerAddress="${zookeeper.server}"/>
+    </jobs:delegate>
+</beans>

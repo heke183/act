@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.ActPlantTaskMapper">
+  <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.ActPlantTask">
+    <id column="ID" jdbcType="BIGINT" property="id" />
+    <result column="CODE" jdbcType="VARCHAR" property="code" />
+    <result column="NAME" jdbcType="VARCHAR" property="name" />
+    <result column="IMAGE" jdbcType="VARCHAR" property="image" />
+    <result column="DETAIL" jdbcType="VARCHAR" property="detail" />
+    <result column="DAY_LIMIT" jdbcType="INTEGER" property="dayLimit" />
+    <result column="TYPE" jdbcType="VARCHAR" property="type" />
+    <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted" />
+    <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="COMMENTS" jdbcType="VARCHAR" property="comments" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ID, CODE, NAME, IMAGE, DETAIL, DAY_LIMIT, TYPE, IS_DELETED, CREATE_TIME, UPDATE_TIME,
+    COMMENTS
+  </sql>
+</mapper>

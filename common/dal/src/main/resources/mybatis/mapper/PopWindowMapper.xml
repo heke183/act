@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.PopWindowMapper">
+    <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.PopWindow">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="ACTIVITY_NAME" jdbcType="VARCHAR" property="activityName"/>
+        <result column="TEMPLATE_CODE" jdbcType="VARCHAR" property="templateCode"/>
+        <result column="SHOW_START_TIME" jdbcType="TIMESTAMP" property="showStartTime"/>
+        <result column="SHOW_EXPIRE_TIME" jdbcType="TIMESTAMP" property="showExpireTime"/>
+        <result column="ACTIVITY_LOGO" jdbcType="VARCHAR" property="activityLogo"/>
+        <result column="ACTIVITY_LOGO_DEST_URL" jdbcType="VARCHAR" property="activityLogoDestUrl"/>
+        <result column="LEFT_BUTTON_URL" jdbcType="VARCHAR" property="leftButtonUrl"/>
+        <result column="RIGHT_BUTTON_URL" jdbcType="VARCHAR" property="rightButtonUrl"/>
+        <result column="FREQUENCY" jdbcType="VARCHAR" property="frequency"/>
+        <result column="ORDER_NUM" jdbcType="VARCHAR" property="orderNum"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted"/>
+        <result column="CREATOR" jdbcType="VARCHAR" property="creator"/>
+        <result column="UPDATER" jdbcType="VARCHAR" property="updater"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments"/>
+        <result column="FREQUENCY" jdbcType="INTEGER" property="frequency"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    ID, ACTIVITY_NAME, TEMPLATE_CODE, SHOW_START_TIME, SHOW_EXPIRE_TIME, ACTIVITY_LOGO,
+    ACTIVITY_LOGO_DEST_URL, LEFT_BUTTON_URL, RIGHT_BUTTON_URL, ORDER_NUM, STATUS, IS_DELETED, 
+    CREATOR, UPDATER, CREATE_DATE, UPDATE_DATE, COMMENTS,FREQUENCY
+    </sql>
+    <select id="queryPopWindowList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM act_pop_window
+        WHERE IS_DELETED='0'
+        AND STATUS='0'
+        AND TYPE='BY_TIME'
+    </select>
+</mapper>

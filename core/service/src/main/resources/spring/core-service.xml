@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns="http://www.springframework.org/schema/beans"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.xianglin.core.service"/>
+
+    <bean id="compositeFilter" name="compositeFilter" class="com.xianglin.core.service.filter.CompositeFilter">
+        <property name="filters">
+            <list>
+                <!--<bean class="com.xianglin.core.service.filter.CountLimitFilter"/>
+                <bean class="com.xianglin.core.service.filter.IpLimitFilter"/>
+                <bean class="com.xianglin.core.service.filter.SignatureLimitFilter"/>
+                <bean class="com.xianglin.core.service.filter.SecurityKeyFilter"/>
+                <bean class="com.xianglin.core.service.filter.AfterProcessFilter"/>
+                <bean class="com.xianglin.core.service.filter.regular.TimeLimitFilter"/>-->
+            </list>
+        </property>
+    </bean>
+
+    <bean name="newActivityStrategy" class="com.xianglin.core.service.strategy.impl.NewActivityStrategy">
+    </bean>
+
+    <bean name="regularActivityStrategy" class="com.xianglin.core.service.strategy.impl.RegularActivityStrategy">
+        <constructor-arg name="redissonClient" ref="redissonClient"/>
+    </bean>
+
+
+</beans>

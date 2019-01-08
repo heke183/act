@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.SharerMapper">
+
+    <insert id="insertSharer" parameterType="com.xianglin.act.common.dal.model.redpacket.Sharer">
+        INSERT INTO act_red_packet_sharer (
+        PARTY_ID, MOBILE_PHONE, DEVICE_ID,
+        WX_OPEN_ID, WX_HEAD_IMG, WX_NICK_NAME,SHARER_QR_CODE,
+        CREATOR, UPDATER, CREATE_DATE, UPDATE_DATE)
+        VALUES
+        (#{partyId}, #{mobilePhone}, #{deviceId},
+        #{wxOpenId}, #{wxHeadImg}, #{wxNickName},#{sharerQrCode},
+        'system', 'system', now(), now()
+        )
+    </insert>
+
+    <update id="updateSharer" parameterType="com.xianglin.act.common.dal.model.redpacket.Sharer">
+        UPDATE act_red_packet_sharer
+        SET
+        <if test="wxOpenId != null and wxOpenId != ''"> WX_OPEN_ID = #{wxOpenId},</if>
+        <if test="wxNickName != null and wxNickName != ''"> WX_NICK_NAME = #{wxNickName},</if>
+        <if test="wxHeadImg != null and wxHeadImg != ''"> WX_HEAD_IMG = #{wxHeadImg},</if>
+        <if test="sharerQrCode != null and sharerQrCode != ''"> SHARER_QR_CODE = #{sharerQrCode},</if>
+        UPDATE_DATE = now()
+        WHERE PARTY_ID = #{partyId} AND IS_DELETED = '0'
+    </update>
+
+    <select id="selectSharerByPartyId" parameterType="long"
+            resultType="com.xianglin.act.common.dal.model.redpacket.SharerInfo" >
+        SELECT
+          PARTY_ID partyId,
+          WX_HEAD_IMG wxHeadImg,
+          WX_NICK_NAME wxNickName,
+          WX_OPEN_ID wxOpenId,
+          SHARER_QR_CODE sharerQrCode
+        FROM act_red_packet_sharer
+        WHERE PARTY_ID = #{partyId} AND IS_DELETED = '0'
+    </select>
+
+    <select id="selectSharerByOpenId" parameterType="string"
+            resultType="com.xianglin.act.common.dal.model.redpacket.SharerInfo">
+        SELECT
+          PARTY_ID partyId,
+          WX_HEAD_IMG wxHeadImg,
+          WX_NICK_NAME wxNickName,
+          WX_OPEN_ID wxOpenId
+        FROM act_red_packet_sharer
+        WHERE WX_OPEN_ID = #{wxOpenId} AND IS_DELETED = '0'
+    </select>
+
+    <select id="selectRedPacketInfo" parameterType="string" resultType="int">
+        SELECT count(*)
+        FROM act_red_packet_sharer a
+          INNER JOIN act_red_packet b ON a.PARTY_ID = b.PARTY_ID
+             AND a.IS_DELETED = '0' AND b.IS_DELETED = '0'
+             AND b.MEMC_CODE IS NOT NULL AND b.IS_COMPLETE = 'Y' AND a.DEVICE_ID = #{value}
+          INNER JOIN act_customer_acquire_record c ON b.MEMC_CODE = c.MEMC_CODE
+           AND DATE(ACQUIRE_DATE) = CURDATE()
+    </select>
+
+    <update id="updateSharerOpenIdUnion">
+        UPDATE act_red_packet_sharer a, (SELECT
+                                   PARTY_ID,
+                                   MOBILE_PHONE,
+                                   WX_OPEN_ID
+                                 FROM act_red_packet_partaker WHERE IS_DELETED = '0'
+                                 GROUP BY PARTY_ID, MOBILE_PHONE, WX_OPEN_ID) b
+SET a.WX_OPEN_ID = b.WX_OPEN_ID WHERE a.IS_DELETED = '0' AND a.PARTY_ID = b.PARTY_ID AND a.WX_OPEN_ID IS NULL
+    </update>
+
+</mapper>

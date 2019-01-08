@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.ActivityPartakeMapper">
+    <sql id="Base_Column_List">
+    ID, PARTY_ID, USER_NAME, USER_TYPE, ACTIVITY_CODE, MOBILE_PHONE, HEAD_IMAGE_URL,
+    ACTIVITY_FEE, PRIZE_CODE, PRIZE_VALUE, MEMC_CODE, ACQUIRE_DATE, SIGN_IN_DATE, STATUS,
+    IS_DELETED, CREATOR, UPDATER, CREATE_DATE, UPDATE_DATE, COMMENTS
+  </sql>
+    <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.ActivityPartake">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="PARTY_ID" jdbcType="BIGINT" property="partyId"/>
+        <result column="USER_NAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="USER_TYPE" jdbcType="VARCHAR" property="userType"/>
+        <result column="ACTIVITY_CODE" jdbcType="VARCHAR" property="activityCode"/>
+        <result column="MOBILE_PHONE" jdbcType="VARCHAR" property="mobilePhone"/>
+        <result column="HEAD_IMAGE_URL" jdbcType="VARCHAR" property="headImageUrl"/>
+        <result column="ACTIVITY_FEE" jdbcType="DECIMAL" property="activityFee"/>
+        <result column="PRIZE_CODE" jdbcType="VARCHAR" property="prizeCode"/>
+        <result column="PRIZE_VALUE" jdbcType="DECIMAL" property="prizeValue"/>
+        <result column="MEMC_CODE" jdbcType="VARCHAR" property="memcCode"/>
+        <result column="ACQUIRE_DATE" jdbcType="TIMESTAMP" property="acquireDate"/>
+        <result column="SIGN_IN_DATE" jdbcType="TIMESTAMP" property="signInDate"/>
+        <result column="STATUS" jdbcType="VARCHAR" property="status"/>
+        <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted"/>
+        <result column="CREATOR" jdbcType="VARCHAR" property="creator"/>
+        <result column="UPDATER" jdbcType="VARCHAR" property="updater"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments"/>
+    </resultMap>
+    <select id="getSignStatusSummary" resultType="java.util.Map">
+    SELECT
+        IFNULL(count(0), 0)         AS SUCCESS_DAYS,
+        IFNULL(sum(PRIZE_VALUE), 0) AS AWARD_AMOUNT
+    FROM act_customer_acquire_record cu
+    WHERE (STATUS = 'AWARD' || STATUS = 'SIGN_IN')
+          AND IS_DELETED = 0
+          AND PARTY_ID = #{partyId}
+          AND USER_TYPE = 'ATTENDANCE_USER'
+          AND ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+    </select>
+    <select id="getEarliestStar" resultType="com.xianglin.act.common.dal.model.ActivityPartake">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        SELECT
+        cu.USER_NAME AS userName,
+        cu.HEAD_IMAGE_URL AS headImageUrl,
+        cu.SIGN_IN_DATE AS signInDate
+        FROM act_customer_acquire_record cu
+        WHERE cu.STATUS = 'AWARD'
+        AND cu.USER_TYPE = 'ATTENDANCE_USER'
+        AND cu.ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND cu.IS_DELETED = 0
+        AND date_format(cu.SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        ORDER BY SIGN_IN_DATE ASC
+        LIMIT 1
+    </select>
+    <select id="getBiggestAwardStar" resultType="com.xianglin.act.common.dal.model.ActivityPartake">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        SELECT
+        cu.USER_NAME AS userName,
+        cu.HEAD_IMAGE_URL AS headImageUrl,
+        cu.PRIZE_VALUE AS prizeValue
+        FROM act_customer_acquire_record cu
+        WHERE cu.STATUS = 'AWARD'
+        AND cu.USER_TYPE = 'ATTENDANCE_USER'
+        AND cu.ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND cu.IS_DELETED = 0
+        AND date_format(cu.SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        ORDER BY PRIZE_VALUE DESC
+        LIMIT 1
+    </select>
+    <select id="getMostPersistStar" resultType="map">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        SELECT
+        cu.USER_NAME AS USER_NAME,
+        cu.HEAD_IMAGE_URL AS HEAD_IMAGE_URL,
+        ext.PROP_VALUE AS SIGN_IN_TIMES
+        FROM act_customer_acquire_record cu INNER JOIN act_sign_times ext ON cu.PARTY_ID = ext.RELATION_ID
+        WHERE cu.STATUS = 'AWARD'
+        AND cu.USER_TYPE = 'ATTENDANCE_USER'
+        AND cu.ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND cu.IS_DELETED = 0
+        AND date_format(cu.SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        AND ext.IS_DELETED = 0 AND ext.PROP_TYPE = 'ATTENDANCE_AWARD'
+        AND ext.PROP_KEY = 'SIGN_IN_TIMES'
+        AND date_format(ext.UPDATE_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        ORDER BY ext.PROP_VALUE DESC, cu.SIGN_IN_DATE ASC
+        LIMIT 1
+    </select>
+    <select id="getActivityPartakeByPartyId" resultMap="BaseResultMap">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM act_customer_acquire_record cu
+        WHERE cu.STATUS = 'SIGN_IN'
+        AND cu.USER_TYPE = 'ATTENDANCE_USER'
+        AND cu.ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND cu.IS_DELETED = 0
+        AND date_format(cu.SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        AND cu.PARTY_ID = #{partyId}
+    </select>
+    <select id="getBigDoubledAwardUsersFromContinuousSignInUser" resultType="java.lang.Long">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        SELECT cu.PARTY_ID
+        FROM act_customer_acquire_record cu INNER JOIN act_sign_times ext ON cu.PARTY_ID = ext.RELATION_ID
+        WHERE cu.STATUS = 'SIGN_IN'
+        AND cu.USER_TYPE = 'ATTENDANCE_USER'
+        AND cu.ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND cu.IS_DELETED = 0
+        AND date_format(cu.SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        AND ext.IS_DELETED = 0 AND ext.PROP_TYPE = 'ATTENDANCE_AWARD'
+        AND ext.PROP_KEY = 'SIGN_IN_TIMES'
+        AND date_format(ext.UPDATE_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        AND ext.PROP_VALUE >= #{fromDays}
+        AND ext.PROP_VALUE &lt;= #{toDays}
+        ORDER BY RAND() DESC LIMIT #{size}
+    </select>
+    <select id="getBigDoubledAwardUsersFromDisContinuousSignInUser" resultType="java.lang.Long">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        SELECT cu.PARTY_ID
+        FROM act_customer_acquire_record cu
+        WHERE cu.STATUS = 'SIGN_IN'
+        AND cu.USER_TYPE = 'ATTENDANCE_USER'
+        AND cu.ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND cu.IS_DELETED = 0
+        AND date_format(cu.SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        ORDER BY RAND() LIMIT #{size}
+    </select>
+    <select id="getBigDoubledAwardUsersFromAllSignInUser" resultType="java.lang.Long">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        SELECT cu.PARTY_ID
+        FROM act_customer_acquire_record cu
+        WHERE cu.STATUS = 'SIGN_IN'
+        AND cu.USER_TYPE = 'ATTENDANCE_USER'
+        AND cu.ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND cu.IS_DELETED = 0
+        AND date_format(cu.SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        ORDER BY RAND() LIMIT #{size}
+    </select>
+    <update id="updateActivityPartakeAwardAmount">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        <![CDATA[
+        UPDATE act_customer_acquire_record
+        SET PRIZE_VALUE = #{awardAmount}, PRIZE_CODE = #{awardCode}, UPDATE_DATE = #{now}, ACQUIRE_DATE = #{now}, STATUS='AWARD'
+        WHERE STATUS = 'SIGN_IN'
+              AND USER_TYPE = 'ATTENDANCE_USER'
+              AND ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+              AND IS_DELETED = 0
+              AND date_format(SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+              AND PARTY_ID = #{partyId}
+        ]]>
+    </update>
+    <select id="countProbabilityAwardUser" resultType="java.lang.Long">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        <![CDATA[
+        SELECT COUNT(*)
+        FROM act_customer_acquire_record cu
+        WHERE STATUS = 'SIGN_IN'
+        AND cu.USER_TYPE = 'ATTENDANCE_USER'
+        AND cu.ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND cu.IS_DELETED = 0
+        AND date_format(SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+        ]]>
+    </select>
+    <resultMap id="userMap" type="map">
+        <result property="ROW_NUM" column="ROW_NUM" javaType="long"/>
+        <result property="PARTY_ID" column="PARTY_ID" javaType="long"/>
+        <result property="ACTIVITY_FEE" column="ACTIVITY_FEE" javaType="java.math.BigDecimal"/>
+    </resultMap>
+    <select id="getProbabilityAwardUsers" resultMap="userMap">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        <![CDATA[
+        SELECT rowNum AS ROW_NUM,PARTY_ID AS PARTY_ID,ACTIVITY_FEE AS ACTIVITY_FEE
+        FROM (SELECT
+                (@i := @i + 1) AS rowNum,
+                cu.PARTY_ID,
+                cu.ACTIVITY_FEE
+              FROM act_customer_acquire_record cu, (SELECT @i := 0) B
+              WHERE
+                STATUS = 'SIGN_IN'
+                AND cu.USER_TYPE = 'ATTENDANCE_USER'
+                AND cu.ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+                AND cu.IS_DELETED = 0
+                AND date_format(SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+              ORDER BY SIGN_IN_DATE ASC, CREATE_DATE ASC, ID ASC) temp
+        LIMIT #{offset},#{limit}
+        ]]>
+    </select>
+    <update id="updateProbabilityAwardUserStatus">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        UPDATE act_customer_acquire_record
+        SET STATUS = 'AWARD', UPDATE_DATE = #{now}
+        WHERE STATUS = 'SIGN_IN'
+        AND
+        USER_TYPE = 'ATTENDANCE_USER'
+        AND ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND IS_DELETED = 0
+        AND ACQUIRE_DATE IS NOT NULL
+        AND PRIZE_CODE IS NOT NULL
+        AND PRIZE_VALUE IS NOT NULL
+        AND date_format(SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+    </update>
+    <update id="updateProbabilityAwardValue">
+        <bind name="now" value="@java.time.LocalDateTime@now()"/>
+        UPDATE act_customer_acquire_record
+        SET PRIZE_CODE=#{awardCode}, PRIZE_VALUE=#{prizeValue}, UPDATE_DATE = #{now}, ACQUIRE_DATE=#{now}
+        WHERE STATUS = 'SIGN_IN'
+        AND USER_TYPE = 'ATTENDANCE_USER'
+        AND PARTY_ID=#{partyId}
+        AND ACTIVITY_CODE = 'ATTENDANCE_AWARD'
+        AND IS_DELETED = 0
+        AND ACQUIRE_DATE IS NULL
+        AND PRIZE_CODE IS NULL
+        AND PRIZE_VALUE IS NULL
+        AND date_format(SIGN_IN_DATE, '%y-%m-%d') = date_format(#{now}, '%y-%m-%d')
+    </update>
+
+    <select id="getAwardCoinTotal" resultType="java.math.BigDecimal">
+        <bind name="now" value="@java.time.LocalDate@now()"/>
+        SELECT IFNULL(SUM(ACTIVITY_FEE),0) FROM act_customer_acquire_record
+        WHERE date(DATE_ADD(CREATE_DATE,INTERVAL 1 DAY)) = #{now}
+    </select>
+
+
+</mapper>

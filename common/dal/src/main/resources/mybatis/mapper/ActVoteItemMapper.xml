@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.ActVoteItemMapper">
+    <resultMap id="BaseResultMap" type="com.xianglin.act.common.dal.model.ActVoteItem">
+        <id column="ID" jdbcType="BIGINT" property="id"/>
+        <result column="ORDER_NUMBER" jdbcType="VARCHAR" property="orderNumber"/>
+        <result column="ACTIVITY_CODE" jdbcType="VARCHAR" property="activityCode"/>
+        <result column="PARTY_ID" jdbcType="BIGINT" property="partyId"/>
+        <result column="IMAGES" jdbcType="VARCHAR" property="images"/>
+        <result column="DESCRIPTION" jdbcType="VARCHAR" property="description"/>
+        <result column="BASE_VOTE_NUM" jdbcType="INTEGER" property="baseVoteNum"/>
+        <result column="REAL_VOTE_NUM" jdbcType="INTEGER" property="realVoteNum"/>
+        <result column="IS_DELETED" jdbcType="VARCHAR" property="isDeleted"/>
+        <result column="CREATOR" jdbcType="VARCHAR" property="creator"/>
+        <result column="UPDATER" jdbcType="VARCHAR" property="updater"/>
+        <result column="CREATE_DATE" jdbcType="TIMESTAMP" property="createDate"/>
+        <result column="UPDATE_DATE" jdbcType="TIMESTAMP" property="updateDate"/>
+        <result column="COMMENTS" jdbcType="VARCHAR" property="comments"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+    ID,ORDER_NUMBER,ACTIVITY_CODE, PARTY_ID, IMAGES, DESCRIPTION,
+    BASE_VOTE_NUM, REAL_VOTE_NUM, IS_DELETED, CREATOR, UPDATER, CREATE_DATE, UPDATE_DATE, COMMENTS
+    </sql>
+
+    <select id="selectItemList" resultMap="BaseResultMap">
+        SELECT
+        <include refid="Base_Column_List"/>
+        FROM act_vote_item
+        WHERE ACTIVITY_CODE = #{activityCode} and IS_DELETED = 0
+        <if test="order == 'ASC' and lastId != '' and lastId != null">
+            and ID &gt; #{lastId}
+        </if>
+        <if test="order == 'DESC' and lastId != '' and lastId != null">
+            and ID &lt; #{lastId}
+        </if>
+        ORDER BY ID ${order}
+        LIMIT #{pageSize}
+    </select>
+
+    <update id="updateVoteNum" parameterType="long">
+        UPDATE act_vote_item
+        SET REAL_VOTE_NUM = REAL_VOTE_NUM + 1, UPDATE_DATE = now()
+        WHERE PARTY_ID = #{value}
+    </update>
+
+    <select id="myItem" resultType="com.xianglin.act.common.dal.model.ActVoteItem">
+
+        SELECT
+          x.ID                       id,
+          x.ORDER_NUMBER             orderNumber,
+          x.BASE_VOTE_NUM            baseVoteNum,
+          x.REAL_VOTE_NUM            realVoteNum,
+          x.rank                     ranking,
+          x.IMAGES                   images,
+          ifnull(y.STATUS, 'VOTING') status
+        FROM
+          (SELECT
+             ID,
+             ORDER_NUMBER,
+             PARTY_ID,
+             BASE_VOTE_NUM,
+             REAL_VOTE_NUM,
+             (@rank := @rank + 1) rank,
+             IMAGES
+           FROM act_vote_item a, (SELECT @rank := 0) b where IS_DELETED='0'  and ACTIVITY_CODE = #{activityCode}
+           ORDER BY REAL_VOTE_NUM + BASE_VOTE_NUM DESC, ID ASC) x LEFT JOIN act_customer_acquire_record y ON x.PARTY_ID = y.PARTY_ID
+                                                                                AND y.ACTIVITY_CODE = #{activityCode} AND
+                                                                                y.USER_TYPE = 'VOTE_PARTAKE' AND y.STATUS IS NOT NULL
+                                                                                AND y.IS_DELETED = '0'
+            WHERE
+              x.PARTY_ID = #{partyId}
+    </select>
+
+    <select id="selectItemListOfWorldCup" resultType="com.xianglin.act.common.dal.model.ActVoteItem">
+
+        SELECT
+          PARTY_ID partyId,
+          STATUS status,
+          IMAGES images,
+          DESCRIPTION description,
+          BASE_VOTE_NUM baseVoteNum,
+          REAL_VOTE_NUM realVoteNum
+        FROM act_vote_item
+        WHERE IS_DELETED = '0' AND ACTIVITY_CODE = 'ACT_VOTE_WORLD_CUP'
+        ORDER BY STATUS,ID
+    </select>
+
+</mapper>

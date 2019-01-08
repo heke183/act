@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:redisson="http://redisson.org/schema/redisson" xmlns="http://www.springframework.org/schema/beans"
+       xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://redisson.org/schema/redisson http://redisson.org/schema/redisson/redisson.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <context:component-scan base-package="com.xianglin.act.common.util.rocketmq"/>
+
+    <context:property-placeholder location="classpath:config.properties"/>
+
+    <bean id="sessionHelper" class="com.xianglin.act.common.util.SessionHelper">
+        <property name="sessionRepository">
+            <!-- session仓库 -->
+            <bean class="com.xianglin.fala.session.RedisSessionRepository">
+                <property name="sessionIdPrefix" value="GLOBAL"/>
+                <property name="defaultMaxInactiveInterval" value="604800"/>
+                <property name="redisClient">
+                    <bean class="com.xianglin.fala.session.RedisClient" init-method="init" destroy-method="destroy">
+                        <property name="redisHosts" value="${session.redis.host}"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+    </bean>
+
+    <bean id="redisClient" class="com.xianglin.fala.session.RedisClient" init-method="init" destroy-method="destroy">
+        <property name="redisHosts" value="${session.redis.host}"/>
+    </bean>
+
+    <bean id="wxApiUtils" class="com.xianglin.act.common.util.WxApiUtils">
+        <property name="appid" value="${wx.appid}"/>
+        <property name="secret" value="${wx.secret}"/>
+        <property name="redirectUrl" value="${wx.auth.redirectUrl}"/>
+    </bean>
+
+    <bean id="wxAppletApiUtils" class="com.xianglin.act.common.util.WxAppletApiUtils">
+        <property name="appid" value="${wx.applet.appid}"/>
+        <property name="secret" value="${wx.applet.secret}"/>
+        <property name="redissonClient" ref="redissonClient"></property>
+    </bean>
+
+    <bean id="wxApiUtils2" class="com.xianglin.act.common.util.WxApiUtils">
+        <property name="appid" value="${wx.appid}"/>
+        <property name="secret" value="${wx.secret}"/>
+        <property name="redirectUrl" value="${wx.auth.redirectUrl2}"/>
+    </bean>
+
+    <bean class="com.xianglin.act.common.util.RedPacketImages">
+        <property name="sourceUrl">
+            <list>
+                <value>${rp.shareImage.one}</value>
+                <value>${rp.shareImage.two}</value>
+            </list>
+        </property>
+    </bean>
+
+    <bean class="com.xianglin.act.common.util.LoginAttrUtil">
+        <property name="sessionHelper" ref="sessionHelper"/>
+    </bean>
+
+    <!--redisson的实例 -->
+    <redisson:client id="redissonClient">
+        <redisson:single-server address="${cache.redis.host}"
+                                connection-minimum-idle-size="${cache.redis.connectionMinimumIdleSize}"
+                                connection-pool-size="${cache.redis.connectionPoolSize}"
+                                client-name="${system.name}"
+                                database="2"/>
+    </redisson:client>
+
+    <!--modelmapper-->
+    <bean class="com.xianglin.act.common.util.modelmapper.ModelMapperFactoryBean"/>
+
+    <!--mqProducer-->
+    <bean class="com.xianglin.act.common.util.rocketmq.RocketMqProducer">
+        <property name="namesrvAddr" value="${mq.namesrvAddr}"/>
+        <property name="producerGroupName" value="PRODUCER_XL_ACT"/>
+        <property name="sendMsgTimeout" value="${mq.sendMsgTimeout}"/>
+    </bean>
+
+    <!--mqListener-->
+    <bean class="com.xianglin.act.common.util.rocketmq.MqEventBusImpl">
+        <property name="namesrvAddr" value="${mq.namesrvAddr}"/>
+        <property name="consumerGroupName" value="CONSUMER_XL_ACT"/>
+    </bean>
+
+    <!-- ecApiUtils-->
+    <bean class="com.xianglin.act.common.util.EcApis"/>
+
+    <task:annotation-driven executor="annotationExecutor"/>
+    <!-- 支持 @Async 注解 -->
+    <task:executor id="annotationExecutor" pool-size="10"/>
+
+    <bean class="com.xianglin.act.common.util.dbconfig.DbConfigBeanInvokeHandler"/>
+</beans>

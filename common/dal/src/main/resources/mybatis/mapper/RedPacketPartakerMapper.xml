@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xianglin.act.common.dal.mappers.RedPacketPartakerMapper">
+
+    <insert id="insert" parameterType="com.xianglin.act.common.dal.model.redpacket.PartakerInfo">
+      INSERT INTO act_red_packet_partaker (PACKET_ID, PARTY_ID, USER_TYPE, MOBILE_PHONE, DEVICE_ID,
+          WX_OPEN_ID, OPEN_DATE, PRIZE_CODE, PRIZE_VALUE, MEMC_CODE, CREATOR, UPDATER, CREATE_DATE, UPDATE_DATE)
+        VALUES (#{packetId}, #{partyId}, #{userType}, #{mobilePhone}, #{deviceId},
+        #{wxOpenId}, now(), #{prizeCode}, #{prizeValue}, #{memcCode}, 'system', 'system', now(), now());
+    </insert>
+
+    <select id="selectRedPacketPartaker" resultType="com.xianglin.act.common.dal.model.redpacket.Partaker">
+
+        SELECT
+        PACKET_ID packetId,
+        PARTY_ID partyId,
+        MOBILE_PHONE mobilePhone,
+        DEVICE_ID deviceId,
+        WX_OPEN_ID wxOpenId,
+        OPEN_DATE openDate,
+        MEMC_CODE memcCode
+        FROM act_red_packet_partaker
+        WHERE IS_DELETED = '0'
+        <if test="partyId != null">
+            AND PARTY_ID = #{partyId}
+        </if>
+        <if test="openDate != null">
+            AND DATE(OPEN_DATE) = DATE(#{openDate, jdbcType=DATE})
+        </if>
+        <if test="excludePacketId != null and excludePacketId != ''">
+            AND PACKET_ID != #{excludePacketId}
+        </if>
+        AND OPEN_DATE > '2018-05-08 23:59:59'
+
+    </select>
+
+    <select id="selectRedPacketPartakerInfo" parameterType="string"
+            resultType="com.xianglin.act.common.dal.model.redpacket.PartakerInfo">
+        SELECT
+          PACKET_ID                packetId,
+          PARTY_ID                 partyId,
+          MOBILE_PHONE             mobilePhone,
+          HEAD_IMG                 headImg,
+          DEVICE_ID                deviceId,
+          WX_OPEN_ID               wxOpenId,
+          OPEN_DATE                openDate,
+          IS_REMIND                isRemind,
+          MEMC_CODE                MemcCode,
+          a.PRIZE_CODE             prizeCode,
+          PRIZE_VALUE / b.UNIT_RMB prizeValue
+        FROM act_red_packet_partaker a INNER JOIN act_prize b
+            ON a.PRIZE_CODE = b.PRIZE_CODE AND b.ACTIVITY_CODE = 'RED_PACKET_V2'
+        WHERE a.IS_DELETED = '0' AND b.IS_DELETED = '0' AND PACKET_ID = #{value} AND IS_REMIND = 'Y'
+    </select>
+
+    <select id="selectLastUnexpireRedPacket" parameterType="long"
+            resultType="com.xianglin.act.common.dal.model.redpacket.PartakerInfo">
+        SELECT
+          PACKET_ID    packetId,
+          PARTY_ID     partyId,
+          MOBILE_PHONE mobilePhone,
+          HEAD_IMG     headImg,
+          DEVICE_ID    deviceId,
+          WX_OPEN_ID   wxOpenId,
+          OPEN_DATE    openDate,
+          CASE IS_REMIND
+          WHEN 'Y'
+            THEN 1
+          ELSE 0 END   isRemind,
+          MEMC_CODE    memcCode,
+          PRIZE_CODE   prizeCode,
+          PRIZE_VALUE  prizeValue
+        FROM act_red_packet_partaker
+        WHERE IS_DELETED = '0' AND PARTY_ID = #{partyId}
+          AND OPEN_DATE >= date_sub(now(), INTERVAL 24 HOUR)
+          AND USER_TYPE = 'RP_PARTAKER'
+        ORDER BY OPEN_DATE DESC
+        LIMIT 1
+    </select>
+
+    <select id="selectLastOpenedRedPacket"
+            resultType="com.xianglin.act.common.dal.model.redpacket.PartakerInfo">
+        SELECT
+          PACKET_ID    packetId,
+          PARTY_ID     partyId,
+          MOBILE_PHONE mobilePhone,
+          HEAD_IMG     headImg,
+          DEVICE_ID    deviceId,
+          WX_OPEN_ID  wxOpenId,
+          OPEN_DATE    openDate,
+          IS_REMIND    isRemind,
+          MEMC_CODE    memcCode,
+          PRIZE_CODE   prizeCode,
+          PRIZE_VALUE  prizeValue
+        FROM act_red_packet_partaker
+        WHERE IS_DELETED = '0' AND PACKET_ID = #{packetId} AND PARTY_ID = #{partyId}
+    </select>
+
+    <update id="updateRedPacketOpenDate">
+        UPDATE act_red_packet_partaker SET OPEN_DATE = now()
+        WHERE IS_DELETED = '0' AND PARTY_ID = #{partyId} AND PACKET_ID = #{packetId}
+    </update>
+
+    <select id="selectRedPacketPartakerUnique"
+            resultType="com.xianglin.act.common.dal.model.redpacket.PartakerInfo">
+        SELECT
+          PARTY_ID partyId,
+          WX_OPEN_ID wxOpenId,
+          MOBILE_PHONE mobilePhone
+        FROM act_red_packet_partaker
+        WHERE IS_DELETED = '0' AND WX_OPEN_ID = #{value}
+        GROUP BY PARTY_ID, WX_OPEN_ID, MOBILE_PHONE
+    </select>
+
+    <select id="selectPartakerForSms" resultType="com.xianglin.act.common.dal.model.redpacket.Partaker">
+        <![CDATA[
+
+            SELECT
+              PARTY_ID partyId,
+              WX_OPEN_ID wxOpenId,
+              MOBILE_PHONE mobilePhone
+            FROM act_red_packet_partaker
+            WHERE IS_DELETED = '0'
+                AND MEMC_CODE IS NULL
+                AND USER_TYPE = 'RP_PARTAKER'
+                AND OPEN_DATE >= #{startDate}
+                AND OPEN_DATE <= #{endDate}
+
+        ]]>
+    </select>
+
+    <update id="updateRemind">
+        UPDATE act_red_packet_partaker
+        SET UPDATE_DATE = now(), IS_REMIND = 'Y', MEMC_CODE = #{memcCode}
+        WHERE IS_DELETED = '0' AND PARTY_ID = #{partyId} AND PACKET_ID = #{packetInfo}
+    </update>
+</mapper>
